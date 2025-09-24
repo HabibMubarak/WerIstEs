@@ -1,0 +1,36 @@
+anime_wer_ist_das/
+│
+├── main.py                # Einstiegspunkt der App
+├── requirements.txt       # Abhängigkeiten (Kivy, KivyMD, Websockets, etc.)
+├── README.md              # Projektbeschreibung (für GitHub)
+│
+├── app/                   # Hauptlogik & UI
+│   ├── __init__.py
+│   ├── ui/                # Screens & Widgets
+│   │   ├── __init__.py
+│   │   ├── home_screen.py # Raster + Buttons
+│   │   ├── chat_screen.py # Chat-UI
+│   │   └── components/    # kleine UI-Elemente (Buttons, Dialoge)
+│   │
+│   ├── core/              # Business-Logik
+│   │   ├── __init__.py
+│   │   ├── game_logic.py  # Spielregeln (Ausschließen, Raten)
+│   │   ├── chat_logic.py  # Chat-Handling + Moderation
+│   │   ├── language.py    # Mehrsprachigkeit (JSON Loader)
+│   │   └── network.py     # Online-Kommunikation + Offline-Check
+│   │
+│   └── assets/            # Statische Inhalte
+│       ├── characters/    # Bilder der Charaktere
+│       ├── icons/         # UI-Icons (z. B. Refresh, Chat)
+│       └── lang/          # Übersetzungsdateien
+│           ├── en.json
+│           ├── de.json
+│           └── jp.json
+│
+├── tests/                 # Tests für Logik
+│   ├── test_game_logic.py
+│   ├── test_chat_logic.py
+│   └── test_network.py
+│
+└── docs/                  # Dokumentation, Screenshots, Roadmap
+    └── design_mockups/    # UI-Entwürfe aus Figma oder Skizzen
