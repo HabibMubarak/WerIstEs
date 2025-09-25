@@ -1,0 +1,134 @@
+<NameScreen>:
+    FloatLayout:
+        # Hintergrundbild
+        FitImage:
+            source: "app/assets/img/cloud_bg.png"
+            size_hint: 1, 1
+            allow_stretch: True
+            keep_ratio: False
+
+        # Willkommen ganz oben
+        MDLabel:
+            id: welcome_label
+            text: root.welcome
+            halign: "center"
+            font_name: 'TitanOne-Regular'
+            font_size: "48sp"
+            theme_text_color: "Primary"
+            size_hint_y: None
+            height: dp(80)
+            pos_hint: {"top": 1}
+
+        # Sprach-Flaggen direkt unter Welcome
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: None, None
+            height: dp(80)
+            width: dp(220)
+            spacing: dp(25)
+            pos_hint: {"center_x": 0.45, "top": 0.8}
+
+            # Deutsche Flagge
+            MDCard:
+                id: flag_de
+                size_hint: None, None
+                size: dp(120), dp(80)
+                elevation: 1
+                radius: [dp(12)]
+                md_bg_color: 1,1,1,1
+                on_release: root.set_language("de")
+                opacity: 1 if root.lang == "de" else 0.5
+
+
+                FitImage:
+                    source: "app/assets/img/flag_ger.png"
+                    allow_stretch: True
+                    keep_ratio: True
+                    radius: [dp(12)]
+                    
+
+            # Englische Flagge
+            MDCard:
+                id: flag_en
+                size_hint: None, None
+                size: dp(120), dp(80)
+                elevation: 1
+                radius: [dp(12)]
+                md_bg_color: 1,1,1,1
+                on_release: root.set_language("en")
+                opacity: 1 if root.lang == "en" else 0.5        
+
+                FitImage:
+                    source: "app/assets/img/flag_en.png"
+                    allow_stretch: True
+                    keep_ratio: True
+                    radius: [dp(12)]
+                    
+
+
+        # Name-Eingabebereich
+        BoxLayout:
+            orientation: "vertical"
+            size_hint: 0.8, 0.5
+            pos_hint: {"center_x": 0.5, "center_y": 0.45}
+            spacing: dp(5)
+            md_bg_color: 0, 0, 0, 1
+
+            MDLabel:
+                id: entername_label
+                text: root.entername
+                font_name: 'TitanOne-Regular'
+                halign: "center"
+                font_size: "24sp"
+                theme_text_color: "Primary"
+
+            MDLabel:
+                id: name_hint
+                text: root.namehint
+                halign: "center"
+                font_style: "Caption"
+                theme_text_color: "Secondary"
+
+            MDTextField:
+                id: name_field
+                hint_text: root.namefield
+                font_size: "24sp"
+                size_hint_x: 0.8
+                pos_hint: {"center_x": 0.5}
+                mode: "fill"
+
+                # Textfarben
+                text_color_normal: 1, 1, 1, 1
+                text_color_focus: 0, 0, 0, 1
+                text_color_disabled: 1, 1, 1, 0.5
+                text_color_error: 1, 0, 0, 1
+
+                # Hinttext-Farben
+                hint_text_color_normal: 0, 0, 0, 1
+                hint_text_color_focus: 0, 0, 0, 1
+                hint_text_color_disabled: 0.8, 0.8, 0.8, 0.5
+                hint_text_color_error: 1, 0, 0, 1
+
+                fill_color_normal: 35/256, 145/256, 190/256, 0.1
+                fill_color_focus: 35/256, 145/256, 190/256, 0.1
+                line_color_normal: 0, 0, 0, 0
+                line_color_focus: 0, 0, 0, 0
+                line_color_disabled: 0, 0, 0, 0
+                line_color_error: 0, 0, 0, 0
+                max_text_length: 10
+
+            Widget:  # Abstandshalter
+
+            MDRaisedButton:
+                id: next_button
+                text: root.next
+                md_bg_color: 61/256, 145/256, 190/256, 1
+                text_color: 1, 1, 1, 1
+                size_hint: 0.6, None
+                height: dp(50)
+                pos_hint: {"center_x": 0.5}
+                elevation: 2
+                font_name: 'TitanOne-Regular'
+                font_size: "20sp"
+                on_release:
+                    root.check_name() and setattr(root.manager, 'current', 'menu')

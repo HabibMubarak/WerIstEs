@@ -1,0 +1,67 @@
+<MenuScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: 61/256, 105/256, 153/256, 0.5
+
+        # Topbar
+        MDTopAppBar:
+            title: root.select_game_mode
+            md_bg_color: 61/256, 105/256, 153/256, 1
+            elevation: 0
+            size_hint_y: None
+            height: dp(56)
+
+
+        # ScrollView füllt den restlichen Platz aus
+        ScrollView:
+            id: playcard_scroll_view
+            do_scroll_x: False
+            do_scroll_y: False
+            size_hint_y: 1   # Nimmt den gesamten Platz unter der TopAppBar ein
+            size_hint_x: 1
+
+            GridLayout:
+                id: grid_cards
+                cols: 2
+                spacing: dp(12)
+                padding: dp(12)
+                size_hint_y: None
+                row_default_height: dp(250)
+                row_force_default: True
+                height: self.minimum_height  # ScrollView weiß, wie groß das Grid ist
+
+                # Karten
+                GameCard:
+                    icon: ""
+                    icon_color: 0.25, 0.5, 1, 1
+                    card_color: 0.1, 0.15, 0.25, 1
+                    text_color: 1, 1, 1, 1
+                    title: root.twoplayer
+                    bg_image: "app/assets/img/twoplayer.png"
+                    on_press: root.manager.current = "twoplayer"
+                GameCard:
+                    icon: "lock"
+                    icon_color: 0.25, 0.5, 1, 1
+                    card_color: 0.1, 0.15, 0.25, 1
+                    text_color: 1, 1, 1, 1
+                    title: root.settings
+                    bg_image: "app/assets/img/comingsoon.png"
+                    on_press: print("Einstellung ausgewählt")
+
+                GameCard:
+                    icon: "lock"
+                    icon_color: 0.25, 0.5, 1, 1
+                    card_color: 0.1, 0.15, 0.25, 1
+                    text_color: 1, 1, 1, 1
+                    title: root.soonavailable
+                    bg_image: "app/assets/img/comingsoon.png"
+                    available: False
+                
+                GameCard:
+                    icon: "lock"
+                    icon_color: 0.25, 0.5, 1, 1
+                    card_color: 0.1, 0.15, 0.25, 1
+                    text_color: 1, 1, 1, 1
+                    title: root.soonavailable
+                    bg_image: "app/assets/img/comingsoon.png"
+                    available: False
