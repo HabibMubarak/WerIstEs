@@ -1,0 +1,22 @@
+{
+    "home": {
+        "title": "Anime – Wer ist das?",
+        "start": "Spiel starten"
+    },
+    "name": {
+        "welcome": "Willkommen!",
+        "entername": "Bitte gib deinen Namen ein",
+        "namehint": "(So sehen dich die anderen Spieler)",
+        "namefield": "Dein Name",
+        "next": "Weiter",
+        "error_long_name": "Dein Name ist zu lang.",
+        "error_empty_name": "Bitte gib einen Namen ein.",
+        "error_name_taken": "Dieser Name ist bereits vergeben. Bitte wähle einen anderen."
+    },
+    "menu": {
+        "select_game_mode": "Wähle den Spielmodus",
+        "twoplayerCard": "2-Spieler",
+        "soonavailable": "Demnächst verfügbar",
+        "settings": "Einstellungen"
+    }
+}

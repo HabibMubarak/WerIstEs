@@ -1,0 +1,22 @@
+{
+    "home": {
+        "title": "Anime - Who's That?",
+        "start": "Start Game"
+    },
+    "name": {
+        "welcome": "Welcome",
+        "entername": "Enter your name",
+        "namehint": "(This is how other players will see you)",
+        "namefield": "Your Name",
+        "next": "Next",
+        "error_long_name": "Name too long.",
+        "error_empty_name": "Please enter a name.",
+        "error_name_taken": "Name already taken, please choose another one."
+    },
+    "menu": {
+        "select_game_mode": "Select Game Mode",
+        "twoplayerCard": "2-Player",
+        "soonavailable": "Coming Soon",
+        "settings": "Settings"
+    }
+}
