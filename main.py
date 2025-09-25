@@ -3,6 +3,8 @@ from kivy.uix.screenmanager import ScreenManager
 
 # Importiere ScreenManager-Setup aus deiner App
 from app.ui import register_screens, PRIMARY_PALETTE, THEME_STYLE # kümmert sich um das Hinzufügen der Screens
+import json
+
 
 class AnimeWerIstDasApp(MDApp):
     def build(self):
