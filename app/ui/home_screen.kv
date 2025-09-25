@@ -9,10 +9,14 @@
             keep_ratio: False
             # Damit das Bild ganz hinten liegt
             z: 0
-        MDFillRoundFlatButton:
+        MDRaisedButton:
             text: "Start"
-            md_bg_color: 61/256, 105/256, 153/256, 1
+            md_bg_color: 61/256, 145/256, 190/256, 1
             text_color: 1, 1, 1, 1
-            size_hint: 0.4, 0.08       # 40% Breite, 8% Höhe
+            elevation: 2
+            size_hint: 0.3, None       # 40% Breite, 8% Höhe
+            font_name: 'TitanOne-Regular'
+            font_size: "20sp"
             pos_hint: {"center_x": 0.5, "y": 0.1}  # 10% vom unteren Rand
-            on_press: root.go_to_chat()
+            on_press: 
+                root.go_to_name()

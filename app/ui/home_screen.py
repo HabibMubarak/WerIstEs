@@ -16,5 +16,5 @@ from kivy.lang import Builder
 Builder.load_file("app/ui/home_screen.kv")
 
 class HomeScreen(MDScreen):
-    def go_to_chat(self):
-        self.manager.current = "chat"
+    def go_to_name(self):
+        self.manager.current = "name"
