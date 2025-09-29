@@ -12,7 +12,7 @@ from kivymd.uix.screen import MDScreen
 from kivy.properties import StringProperty
 from kivy.lang import Builder
 from app.ui.components.game_card import GameCard
-
+from kivy.uix.screenmanager import SlideTransition
 import json
 
 # Lade die .kv-Datei manuell
@@ -37,3 +37,7 @@ class MenuScreen(MDScreen):
         self.twoplayer = data["menu"]["twoplayerCard"]
         self.settings = data["menu"]["settings"]
         self.select_game_mode = data["menu"]["select_game_mode"]
+
+    def two_player_mode(self):
+        self.manager.transition = SlideTransition(direction="left")
+        self.manager.current = "twoplayer"
