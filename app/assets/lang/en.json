@@ -4,8 +4,8 @@
         "start": "Start Game"
     },
     "name": {
-        "welcome": "Welcome",
-        "entername": "Enter your name",
+        "welcome": "Welcome!",
+        "entername": "Please enter your name",
         "namehint": "(This is how other players will see you)",
         "namefield": "Your Name",
         "next": "Next",
@@ -14,7 +14,7 @@
         "error_name_taken": "Name already taken, please choose another one."
     },
     "menu": {
-        "select_game_mode": "Select Game Mode",
+        "select_game_mode": "Select Mode",
         "twoplayerCard": "2-Player",
         "soonavailable": "Coming Soon",
         "settings": "Settings"

@@ -14,7 +14,7 @@
         "error_name_taken": "Dieser Name ist bereits vergeben. Bitte wähle einen anderen."
     },
     "menu": {
-        "select_game_mode": "Wähle den Spielmodus",
+        "select_game_mode": "Wähle einen Modus",
         "twoplayerCard": "2-Spieler",
         "soonavailable": "Demnächst verfügbar",
         "settings": "Einstellungen"
