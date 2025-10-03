@@ -1,9 +1,12 @@
 from .home_screen import HomeScreen
 from .menu_screen import MenuScreen
 from .name_screen import NameScreen
+from .waiting_room_screen import WaitingRoomScreen
 from .twoplayer_screen import TwoPlayerScreen
 from .select_character import SelectCharacter
-
+from .setting_screen import SettingScreen
+from .anime_selection_screen import AnimeSelectionScreen
+from .game_field_screen import GameFieldScreen
 from kivy.core.text import LabelBase
 
 import json
@@ -24,6 +27,11 @@ BUTTON_BG = settings["LIGHT_BLUE"]
 def register_screens(screen_manager):
     screen_manager.add_widget(HomeScreen(name="home"))
     screen_manager.add_widget(NameScreen(name="name"))
+    screen_manager.add_widget(AnimeSelectionScreen(name="anime_selection"))
     screen_manager.add_widget(MenuScreen(name="menu"))
+    screen_manager.add_widget(WaitingRoomScreen(name="waiting_room"))
     screen_manager.add_widget(TwoPlayerScreen(name="twoplayer"))
     screen_manager.add_widget(SelectCharacter(name="select_character"))
+    screen_manager.add_widget(GameFieldScreen(name="game_field"))
+    screen_manager.add_widget(SettingScreen(name="setting"))
+    
