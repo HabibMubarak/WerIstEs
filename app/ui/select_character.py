@@ -54,6 +54,20 @@ class SelectCharacter(MDScreen):
             })
         self.ids.rv.data = data
     
+    def confirm_character(self, *args):
+        print(f"Character confirmed: {self.selected_character}")
+        self.dialog.dismiss()
+
+        # An den Server senden, dass dieser Spieler gewählt hat
+        try:
+            if hasattr(self.manager, "sock") and self.manager.sock:
+                self.manager.sock.sendall(
+                    f"CHAR_SELECTED {self.selected_character}\n".encode("utf-8")
+                )
+        except Exception as e:
+            print("[ERROR] Konnte Auswahl nicht an Server senden:", e)
+
+
     def character_clicked(self, name):
         """Wird aufgerufen, wenn ein Charakter angeklickt wird."""
         self.selected_character = name
@@ -86,8 +100,22 @@ class SelectCharacter(MDScreen):
     def confirm_character(self, *args):
         print(f"Character confirmed: {self.selected_character}")
         self.dialog.dismiss()
-        # Hier kannst du z.B. zum nächsten Screen wechseln:
-        # self.manager.current = "next_screen"
+
+        try:
+            waiting_screen = self.manager.get_screen("waiting_room")
+            room_id = waiting_screen.room_id  # hier liegt die room_id aus START_GAME
+            if room_id and hasattr(waiting_screen, "sock") and waiting_screen.sock:
+                waiting_screen.sock.sendall(
+                    f"CHAR_SELECTED {room_id} {self.selected_character}\n".encode("utf-8")
+                )
+        except Exception as e:
+            print("[ERROR] Konnte Auswahl nicht an Server senden:", e)
+
+        # Danach ins Spielfeld wechseln
+        self.manager.transition.direction = "left"
+        self.manager.current = "game_field"
+
+
 
 
 
