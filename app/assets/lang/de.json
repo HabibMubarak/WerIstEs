@@ -5,18 +5,49 @@
     },
     "name": {
         "welcome": "Willkommen!",
-        "entername": "Bitte gib deinen Namen ein",
-        "namehint": "(So sehen dich die anderen Spieler)",
+        "entername": "Gib bitte deinen Namen ein",
+        "namehint": "(So sehen dich die anderen Spielerinnen und Spieler)",
         "namefield": "Dein Name",
         "next": "Weiter",
         "error_long_name": "Dein Name ist zu lang.",
         "error_empty_name": "Bitte gib einen Namen ein.",
-        "error_name_taken": "Dieser Name ist bereits vergeben. Bitte wähle einen anderen."
+        "error_name_taken": "Dieser Name ist bereits vergeben. Wähle bitte einen anderen."
     },
     "menu": {
-        "select_game_mode": "Wähle einen Modus",
+        "select_game_mode": "Modus auswählen",
         "twoplayerCard": "2-Spieler",
-        "soonavailable": "Demnächst verfügbar",
+        "soonavailable": "Bald verfügbar",
         "settings": "Einstellungen"
+    },
+    "twoplayer":{
+        "select_anime": "Anime auswählen"
+    },
+    "setting": {
+        "setting": "Einstellungen",
+        "edit_profil": {
+            "title": "Profil bearbeiten",
+            "change_name": "Namen ändern",
+            "change_known_animes": "bekannte Animes ändern",
+            "save": "Speichern",
+            "exit": "Abbrechen",
+            "name_taken": "Dieser Name ist ungültig",
+            "name_empty": "Name darf nicht leer sein",
+            "enter_new_name": "Neuen Namen eingeben"
+        },
+        "change_lang": {
+            "title": "Sprache auswählen",
+            "de": "Deutsch",
+            "en": "Englisch"
+        },
+        "notification": {
+            "title": "Benachrichtigungen",
+            "on": "Aktiviert",
+            "off": "Deaktiviert"
+        },
+        "about": {
+            "title": "Über die App",
+            "version": "App-Version",
+            "instagram": "Instagram-Seite"
+        }
     }
 }

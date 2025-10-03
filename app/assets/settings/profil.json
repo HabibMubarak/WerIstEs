@@ -1,4 +1,8 @@
 {
-    "name": "asd",
-    "lang": "de"
+    "name": "asdas",
+    "lang": "de",
+    "known_animes": [
+        "Dragon Ball Z",
+        "Naruto / Naruto Shippuden"
+    ]
 }

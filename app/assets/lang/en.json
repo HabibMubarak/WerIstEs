@@ -1,6 +1,6 @@
 {
     "home": {
-        "title": "Anime - Who's That?",
+        "title": "Anime – Who is it?",
         "start": "Start Game"
     },
     "name": {
@@ -9,14 +9,45 @@
         "namehint": "(This is how other players will see you)",
         "namefield": "Your Name",
         "next": "Next",
-        "error_long_name": "Name too long.",
+        "error_long_name": "Your name is too long.",
         "error_empty_name": "Please enter a name.",
-        "error_name_taken": "Name already taken, please choose another one."
+        "error_name_taken": "This name is already taken. Please choose another one."
     },
     "menu": {
         "select_game_mode": "Select Mode",
         "twoplayerCard": "2-Player",
-        "soonavailable": "Coming Soon",
+        "soonavailable": "Coming soon",
         "settings": "Settings"
+    },
+    "twoplayer": {
+        "select_anime": "Select Anime"
+    },
+    "setting": {
+        "setting": "Settings",
+        "edit_profil": {
+            "title": "Edit Profile",
+            "change_name": "Change Name",
+            "change_known_animes": "Change Known Animes",
+            "save": "Save",
+            "exit": "Cancel",
+            "name_taken": "This name is invalid",
+            "name_empty": "Name cannot be empty",
+            "enter_new_name": "Enter a new name"
+        },
+        "change_lang": {
+            "title": "Select Language",
+            "de": "German",
+            "en": "English"
+        },
+        "notification": {
+            "title": "Notifications",
+            "on": "Enabled",
+            "off": "Disabled"
+        },
+        "about": {
+            "title": "About the App",
+            "version": "App Version",
+            "instagram": "Instagram Page"
+        }
     }
 }
