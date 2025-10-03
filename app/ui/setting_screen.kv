@@ -1,0 +1,18 @@
+<SettingScreen>:
+    name: "settings"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 61/256, 105/256, 153/256, 0.5
+        MDTopAppBar:
+            title: root.setting
+            md_bg_color: 61/256, 105/256, 153/256, 1
+            elevation: 0
+            size_hint_y: None
+            height: dp(56)
+            left_action_items: [["arrow-left", lambda x: root.on_back_pressed()]]
+            right_action_items: [["", lambda x: None]]  # unsichtbares Icon
+
+        ScrollView:
+            MDList:
+                id: settings_list
