@@ -74,13 +74,33 @@ class Character:
     def get_number_of_characters_in_anime(self, anime_name):
         return len(self.get_characters_by_anime(anime_name))
 
-    def get_random_characters_with_images(self, n=5):
+    def get_random_characters_with_images(self, anime_list, n=5):
+        """
+        Gibt insgesamt n zufällige Charaktere mit Bildern aus den angegebenen Animes zurück.
+
+        :param anime_list: Liste von Anime-Namen
+        :param n: Gesamtanzahl der Charaktere
+        :return: Liste von Dictionaries [{"name": name, "img": image_url}, ...]
+        """
+        if not anime_list:
+            return []
+
+        placeholders = ",".join("?" for _ in anime_list)  # "?, ?, ?" für SQL
+        query = f"""
+            SELECT name, image_url 
+            FROM characters 
+            WHERE anime IN ({placeholders}) 
+            ORDER BY RANDOM() 
+            LIMIT ?
+        """
+
         conn = self._connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT name, image_url FROM characters ORDER BY RANDOM() LIMIT ?", (n,))
+        cursor.execute(query, (*anime_list, n))
         rows = cursor.fetchall()
         conn.close()
-        return [{"Character": r[0], "Image_URL": r[1]} for r in rows]
+
+        return [{"name": r[0], "img": r[1]} for r in rows]
 
     def get_image_url_for_character(self, character_name):
         conn = self._connect()
