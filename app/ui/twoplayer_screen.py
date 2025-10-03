@@ -6,18 +6,25 @@ from kivymd.uix.screen import MDScreen
 from kivy.uix.image import AsyncImage
 from kivy.metrics import dp
 from kivy.uix.screenmanager import SlideTransition
+from kivy.properties import StringProperty
+
 
 # Lade die .kv-Datei manuell
 Builder.load_file("app/ui/twoplayer_screen.kv")
 
 class TwoPlayerScreen(MDScreen):
-    
+    select_anime = StringProperty("")
     def on_pre_enter(self):
         # Vor dem Anzeigen der Seite füllen
         character_manager = Character()
         lang = json.load(open("app/assets/settings/profil.json", encoding="utf-8"))["lang"]
         self.anime_data = character_manager.get_anime_details(lang)
         self.fill_view()
+        self.lang = json.load(open("app/assets/settings/profil.json", encoding="utf-8"))["lang"]
+        data = json.load(open(f"app/assets/lang/{self.lang}.json", encoding="utf-8"))
+
+        # Labels aus JSON laden
+        self.select_anime = data["twoplayer"]["select_anime"]
 
     def fill_view(self):
         anime_list_layout = self.ids.anime_list
@@ -64,3 +71,9 @@ class TwoPlayerScreen(MDScreen):
     def search(self):
         # Hier kann eine Suchfunktion implementiert werden
         print("Suche gestartet")
+    
+    def go_to_settings(self):
+        setting_screen = self.manager.get_screen("setting")
+        setting_screen.previous_screen = self.manager.current  # merken
+        self.manager.transition = SlideTransition(direction="left")
+        self.manager.current = "setting"
