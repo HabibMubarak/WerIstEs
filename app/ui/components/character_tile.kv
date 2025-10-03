@@ -1,0 +1,66 @@
+<CharacterTile>:
+    radius: 24
+    box_radius: [0, 0, 24, 24]
+    box_color: 1, 1, 1, .2
+    source: root.tile_source
+    size_hint: None, None
+    size: dp(root.tile_size[0]), dp(root.tile_size[1])
+    pos_hint: {"center_x": .5, "center_y": .5}
+    
+
+    MDBoxLayout:
+        orientation: "vertical"
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(30)
+            md_bg_color: 0.2, 0.5, 0.7, 0.4
+            padding: dp(8)
+            radius: [24, 24, 0, 0]
+            MDLabel:
+                text: root.tile_text
+                halign: "center"
+                bold: True
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+        
+
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(40)
+            md_bg_color: 0.2, 0.5, 0.7, 0.4
+            padding: dp(8)
+            radius: [0, 0, 24, 24]
+            MDLabel:
+                bold: True
+                halign: "center"
+                valign: "middle"
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+
+        # Bild + Daumen-Buttons
+        FloatLayout:
+            FitImage:
+                source: root.tile_source
+                radius: [0, 0, 24, 24]
+
+            MDIconButton:
+                id: left_icon
+                icon: root.tile_left_icon
+                theme_icon_color: "Custom"
+                icon_color: 1, 0, 0, 1
+                pos_hint: {"x": 0, "y": 0}
+                opacity: 1 if root.show_icons else 0
+                disabled: not root.show_icons
+                on_release:
+                    root.on_left_icon()
+
+            MDIconButton:
+                id: right_icon
+                icon: root.tile_right_icon
+                theme_icon_color: "Custom"
+                icon_color: 0, 1, 0, 1
+                pos_hint: {"right": 1, "y": 0}
+                opacity: 0 if root.left_only else (1 if root.show_icons else 0)
+                disabled: root.left_only or not root.show_icons
+                on_release:
+                    root.on_right_icon()
