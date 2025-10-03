@@ -1,0 +1,30 @@
+<WaitingRoomScreen>:
+    FloatLayout:
+        # Hintergrund (optional)
+        FitImage:
+            source: "app/assets/img/cloud_bg.png"
+            size_hint: 1, 1
+            allow_stretch: True
+            keep_ratio: False
+
+        MDLabel:
+            id: waiting_label
+            text: root.waiting_text
+            halign: "center"
+            font_size: "32sp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.6}
+
+        MDLabel:
+            id: player_count_label
+            text: root.player_count_text
+            halign: "center"
+            font_size: "24sp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+        MDRaisedButton:
+            text: "Zurück"
+            pos_hint: {"center_x": 0.5, "center_y": 0.3}
+            size_hint: 0.4, None
+            height: dp(50)
+            on_release:
+                root.go_back()
