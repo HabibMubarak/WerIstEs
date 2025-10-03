@@ -40,4 +40,13 @@ class MenuScreen(MDScreen):
 
     def two_player_mode(self):
         self.manager.transition = SlideTransition(direction="left")
-        self.manager.current = "twoplayer"
+        self.manager.current = "waiting_room"
+    
+    def go_to_settings(self):
+        self.manager.current = "setting"
+
+    def go_to_settings(self):
+        setting_screen = self.manager.get_screen("setting")
+        setting_screen.previous_screen = self.manager.current  # merken
+        self.manager.transition = SlideTransition(direction="left")
+        self.manager.current = "setting"
