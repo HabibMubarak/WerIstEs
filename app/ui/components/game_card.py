@@ -3,8 +3,6 @@ from kivy.properties import StringProperty, ListProperty, ObjectProperty, Boolea
 from kivy.core.image import Image as CoreImage
 from kivy.uix.image import AsyncImage
 import os
-import requests
-from io import BytesIO
 
 class GameCard(MDCard):
     icon = StringProperty('folder')
