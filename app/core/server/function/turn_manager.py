@@ -12,8 +12,8 @@ def main(context):
     )
     databases = Databases(client)
 
-    db_id = "68df8ff0000a37e9af45"
-    col_id = "rooms"
+    db_id = os.environ["MY_DB_ID"]   
+    col_id = os.environ["MY_COLLECTION_ID"]
 
     try:
         body = json.loads(context.req.body or "{}")
