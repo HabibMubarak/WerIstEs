@@ -3,7 +3,7 @@ from kivy.uix.screenmanager import ScreenManager
 from kivy import platform
 # Importiere ScreenManager-Setup aus deiner App
 from app.ui import register_screens, PRIMARY_PALETTE, THEME_STYLE # kümmert sich um das Hinzufügen der Screens
-import json
+
 
 if platform == "android":
     from android.permissions import request_permissions, Permission, check_permission  # pylint: disable=import-error # type: ignore
