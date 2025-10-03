@@ -1,0 +1,18 @@
+<AnimeSelectionScreen>:
+    name: "anime_selection"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 61/256, 105/256, 153/256, 0.5
+        MDTopAppBar:
+            id: topbar
+            title: "Anime auswählen"
+            md_bg_color: 61/256, 105/256, 153/256, 1
+            elevation: 0
+            size_hint_y: None
+            height: dp(56)
+            right_action_items: []
+
+        ScrollView:
+            MDList:
+                id: anime_list
