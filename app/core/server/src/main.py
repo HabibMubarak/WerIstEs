@@ -1,39 +1,70 @@
 from appwrite.client import Client
-from appwrite.services.users import Users
+from appwrite.services.databases import Databases
 from appwrite.exception import AppwriteException
-import os
+import os, json, random
 
-# This Appwrite function will be executed every time your function is triggered
 def main(context):
-    # You can use the Appwrite SDK to interact with other services
-    # For this example, we're using the Users service
     client = (
         Client()
         .set_endpoint(os.environ["APPWRITE_FUNCTION_API_ENDPOINT"])
         .set_project(os.environ["APPWRITE_FUNCTION_PROJECT_ID"])
-        .set_key(context.req.headers["x-appwrite-key"])
+        .set_key(os.environ["APPWRITE_API_KEY"])
     )
-    users = Users(client)
+    databases = Databases(client)
+
+    db_id = os.environ["MY_DB_ID"]   
+    col_id = os.environ["MY_COLLECTION_ID"]
 
     try:
-        response = users.list()
-        # Log messages and errors to the Appwrite Console
-        # These logs won't be seen by your end users
-        context.log("Total users: " + str(response["total"]))
+        body = json.loads(context.req.body or "{}")
+        user_id = body.get("userId")
+        if not user_id:
+            return context.res.json({"error": "userId fehlt"}, 400)
+
+        # Suche nach offenem Raum (1 Spieler, state=waiting)
+        open_rooms = databases.list_documents(
+            database_id=db_id,
+            collection_id=col_id,
+            queries=['equal("state", "waiting")']
+        )
+
+        if open_rooms["total"] > 0:
+            room = open_rooms["documents"][0]
+            doc_id = room["$id"]
+            players = room["players"] + [user_id]
+
+            # Spiel starten, erster Spieler beginnt zufällig
+            start_player = random.choice(players)
+
+            updated = databases.update_document(
+                database_id=db_id,
+                collection_id=col_id,
+                document_id=doc_id,
+                data={
+                    "players": players,
+                    "state": "started",
+                    "current_turn": start_player,
+                    "question": "",
+                    "answer": ""
+                }
+            )
+            return context.res.json({"joined": True, "room": updated})
+
+        else:
+            # Neuer Raum
+            created = databases.create_document(
+                database_id=db_id,
+                collection_id=col_id,
+                document_id="unique()",
+                data={
+                    "players": [user_id],
+                    "state": "waiting",
+                    "current_turn": None,
+                    "question": "",
+                    "answer": ""
+                }
+            )
+            return context.res.json({"joined": False, "room": created})
+
     except AppwriteException as err:
-        context.error("Could not list users: " + repr(err))
-
-    # The req object contains the request data
-    if context.req.path == "/ping":
-        # Use res object to respond with text(), json(), or binary()
-        # Don't forget to return a response!
-        return context.res.text("Pong")
-
-    return context.res.json(
-        {
-            "motto": "Build like a team of hundreds_",
-            "learn": "https://appwrite.io/docs",
-            "connect": "https://appwrite.io/discord",
-            "getInspired": "https://builtwith.appwrite.io",
-        }
-    )
+        return context.res.json({"error": str(err)}, 500)
