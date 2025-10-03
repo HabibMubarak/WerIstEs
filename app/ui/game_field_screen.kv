@@ -1,0 +1,78 @@
+<GameFieldScreen>:
+
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 61/256, 105/256, 153/256, 0.1
+
+        MDTopAppBar:
+            id: topbar
+            title: "Spieler X ist dran"
+            md_bg_color: 61/256, 105/256, 153/256, 1
+            elevation: 0
+            size_hint_y: None
+            height: dp(56)
+
+        MDTabs:
+            id: tabs
+            tab_display_mode: "fixed"
+            on_tab_switch: root.on_tab_switch(*args)
+            md_bg_color: 61/256, 105/256, 153/256, 0.3
+            background_color: 61/256, 105/256, 153/256, 1
+            tab_hint_x: True
+            disable_swiping: True
+            size_hint_y: 1
+
+            Tab:
+                title: "Verfügbar"
+                icon: "account-group"
+                RecycleView:
+                    id: rv_available
+                    viewclass: "CharacterTile"
+                    data: []
+                    RecycleGridLayout:
+                        cols: 2                # Anzahl Spalten im Grid
+                        default_size: None, dp(360)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: dp(12)
+                        padding: dp(12)
+
+            Tab:
+                title: "Ausgeschieden"
+                icon: "account-off"
+                RecycleView:
+                    id: rv_eliminated
+                    viewclass: "CharacterTile"
+                    data: []
+                    RecycleGridLayout:
+                        cols: 2                # Anzahl Spalten im Grid
+                        default_size: None, dp(360)
+                        default_size_hint: 1, None
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: dp(12)
+                        padding: dp(12)
+
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(50)
+            spacing: dp(8)
+            padding: dp(8)
+
+            MDTextFieldRect:
+                id: input_field
+                hint_text: "Nachricht eingeben"
+                multiline: False
+                md_bg_color: 0.9,0.9,0.9,1
+                line_color_normal: 0,0,0,0.3
+                line_color_focus: 0,0.5,1,1
+                text_color: 0,0,0,1
+
+            MDRaisedButton:
+                id: send_btn
+                text: "Senden"
+                md_bg_color: 0.24,0.41,0.6,1
+                text_color: 1,1,1,1
+                on_release: root.send_message(input_field.text)
+                
