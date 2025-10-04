@@ -94,6 +94,17 @@ def main(context):
                     }
                 )
                 context.log(f"[matchmaking] user {user_id} joined room {doc_id}; start_player={start_player}")
+                
+                # Prüfen, ob das Spiel beendet ist
+                if updated.get("state") == "ended":
+                    try:
+                        databases.delete_document(database_id=db_id, collection_id=col_id, document_id=doc_id)
+                        context.log(f"[matchmaking] room {doc_id} deleted after game ended")
+                    except Exception as e:
+                        context.log(f"[matchmaking] failed to delete room {doc_id}: {e}")
+
+                
+                
                 return context.res.json({"joined": True, "room": updated})
             except Exception as e:
                 context.log(f"[matchmaking] update_document error for {doc_id}: {e}")
