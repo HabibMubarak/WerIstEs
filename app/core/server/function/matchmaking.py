@@ -47,12 +47,21 @@ def main(context):
         if not user_id:
             return context.res.json({"error": "userId fehlt"}, 400)
 
+        # Validierung: DB-IDs sollten gesetzt sein
+        if not db_id or not col_id:
+            return context.res.json({"error": "DB_ID oder COLLECTION_ID nicht gesetzt"}, 500)
+
         # Suche nach offenem Raum (state = waiting)
-        open_rooms = databases.list_documents(
-            database_id=db_id,
-            collection_id=col_id,
-            queries=['equal("state", "waiting")']
-        )
+        # Note: Appwrite query strings must not include spaces inside the parentheses
+        try:
+            open_rooms = databases.list_documents(
+                database_id=db_id,
+                collection_id=col_id,
+                queries=['equal("state","waiting")']
+            )
+        except Exception as e:
+            context.log(f"[matchmaking] list_documents error: {e}")
+            return context.res.json({"error": f"Invalid query or DB error: {e}"}, 500)
 
         if open_rooms["total"] > 0:
             room = open_rooms["documents"][0]
