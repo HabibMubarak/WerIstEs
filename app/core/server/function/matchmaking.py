@@ -75,17 +75,21 @@ def main(context):
             start_player = random.choice(players) if state == "started" else None
 
             # Alte überflüssige Räume löschen (nur 1 Spieler, nicht der aktuelle Raum)
+            # Alte überflüssige Räume löschen (nur 1 Spieler, nicht der aktuelle Raum)
             if state == "started":
-                for old_room in waiting_rooms[1:]:
-                    try:
-                        databases.delete_document(
-                            database_id=db_id,
-                            collection_id=col_id,
-                            document_id=old_room.get("$id") or old_room.get("roomId")
-                        )
-                        context.log(f"[matchmaking] deleted old room {old_room.get('roomId')}")
-                    except Exception as e:
-                        context.log(f"[matchmaking] failed to delete old room {old_room.get('roomId')}: {e}")
+                for old_room in waiting_rooms:
+                    # Lösche nur Räume mit genau 1 Spieler, die nicht der aktuelle Raum sind
+                    if old_room.get("$id") != doc_id and len(old_room.get("players", [])) == 1:
+                        try:
+                            databases.delete_document(
+                                database_id=db_id,
+                                collection_id=col_id,
+                                document_id=old_room.get("$id") or old_room.get("roomId")
+                            )
+                            context.log(f"[matchmaking] deleted old single-player room {old_room.get('roomId')}")
+                        except Exception as e:
+                            context.log(f"[matchmaking] failed to delete old room {old_room.get('roomId')}: {e}")
+
 
             try:
                 updated = databases.update_document(
