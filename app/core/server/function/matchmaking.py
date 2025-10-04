@@ -1,7 +1,7 @@
 from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.exception import AppwriteException
-import os, json, random
+import os, json, random, uuid
 
 
 def _parse_request_body(req):
@@ -90,11 +90,14 @@ def main(context):
 
         else:
             # Neuer Raum anlegen
+            # Erzeuge eine eindeutige roomId und verwende sie als document_id
+            room_id = str(uuid.uuid4())[:8]
             created = databases.create_document(
                 database_id=db_id,
                 collection_id=col_id,
-                document_id="unique()",
+                document_id=room_id,
                 data={
+                    "roomId": room_id,
                     "players": [user_id],
                     "state": "waiting",
                     "current_turn": None,
