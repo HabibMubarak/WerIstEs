@@ -52,19 +52,22 @@ def main(context):
             return context.res.json({"error": "DB_ID oder COLLECTION_ID nicht gesetzt"}, 500)
 
         # Suche nach offenem Raum (state = waiting)
-        # Note: Appwrite query strings must not include spaces inside the parentheses
+        # Um mögliche SDK/Query-Inkompatibilitäten zu vermeiden, listen wir die
+        # Dokumente und filtern lokal nach state == 'waiting'. Das ist robuster
+        # und vermeidet Appwrite-Query-Syntax-Probleme.
         try:
-            open_rooms = databases.list_documents(
-                database_id=db_id,
-                collection_id=col_id,
-                queries=['equal("state","waiting")']
-            )
+            docs = databases.list_documents(database_id=db_id, collection_id=col_id)
+            docs_list = docs.get("documents", [])
+            context.log(f"[matchmaking] fetched {len(docs_list)} documents from collection")
         except Exception as e:
             context.log(f"[matchmaking] list_documents error: {e}")
-            return context.res.json({"error": f"Invalid query or DB error: {e}"}, 500)
+            return context.res.json({"error": f"DB error: {e}"}, 500)
 
-        if open_rooms["total"] > 0:
-            room = open_rooms["documents"][0]
+        # Finde erstes wartendes Zimmer
+        room = next((d for d in docs_list if d.get("state") == "waiting"), None)
+        if room:
+            doc_id = room["$id"]
+            players = room.get("players", []) + [user_id]
             doc_id = room["$id"]
             players = room["players"] + [user_id]
 
