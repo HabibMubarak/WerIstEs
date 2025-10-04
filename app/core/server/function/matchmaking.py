@@ -66,27 +66,38 @@ def main(context):
         # Finde erstes wartendes Zimmer
         room = next((d for d in docs_list if d.get("state") == "waiting"), None)
         if room:
-            doc_id = room["$id"]
-            players = room.get("players", []) + [user_id]
-            doc_id = room["$id"]
-            players = room["players"] + [user_id]
+            doc_id = room.get("$id") or room.get("roomId")
+            players = list(room.get("players", []))
 
-            # Spiel starten, erster Spieler beginnt zufällig
+            # Wenn der Spieler schon im Raum ist, gib den Raum unverändert zurück
+            if user_id in players:
+                context.log(f"[matchmaking] user {user_id} already in room {doc_id}")
+                return context.res.json({"joined": True, "room": room})
+
+            # Spieler hinzufügen
+            players.append(user_id)
+
+            # Spiel starten, erster Spieler (nach Join) beginnt zufällig
             start_player = random.choice(players)
 
-            updated = databases.update_document(
-                database_id=db_id,
-                collection_id=col_id,
-                document_id=doc_id,
-                data={
-                    "players": players,
-                    "state": "started",
-                    "current_turn": start_player,
-                    "question": "",
-                    "answer": ""
-                }
-            )
-            return context.res.json({"joined": True, "room": updated})
+            try:
+                updated = databases.update_document(
+                    database_id=db_id,
+                    collection_id=col_id,
+                    document_id=doc_id,
+                    data={
+                        "players": players,
+                        "state": "started",
+                        "current_turn": start_player,
+                        "question": "",
+                        "answer": ""
+                    }
+                )
+                context.log(f"[matchmaking] user {user_id} joined room {doc_id}; start_player={start_player}")
+                return context.res.json({"joined": True, "room": updated})
+            except Exception as e:
+                context.log(f"[matchmaking] update_document error for {doc_id}: {e}")
+                return context.res.json({"error": f"DB update error: {e}"}, 500)
 
         else:
             # Neuer Raum anlegen
