@@ -38,7 +38,7 @@ def main(context):
     )
     databases = Databases(client)
 
-    db_id = os.environ["MY_DB_ID"]   
+    db_id = os.environ["MY_DB_ID"]
     col_id = os.environ["MY_COLLECTION_ID"]
 
     try:
@@ -51,45 +51,27 @@ def main(context):
             return context.res.json({"error": "DB_ID oder COLLECTION_ID nicht gesetzt"}, 500)
 
         # Alle Dokumente abfragen
-        try:
-            docs_list = databases.list_documents(database_id=db_id, collection_id=col_id).get("documents", [])
-            context.log(f"[matchmaking] fetched {len(docs_list)} documents from collection")
-        except Exception as e:
-            context.log(f"[matchmaking] list_documents error: {e}")
-            return context.res.json({"error": f"DB error: {e}"}, 500)
+        docs_list = databases.list_documents(database_id=db_id, collection_id=col_id).get("documents", [])
+        context.log(f"[matchmaking] fetched {len(docs_list)} documents from collection")
+
+        # Prüfen, ob der Spieler bereits in einem Raum ist
+        existing_room = next((d for d in docs_list if user_id in d.get("players", [])), None)
+        if existing_room:
+            context.log(f"[matchmaking] user {user_id} already in a room {existing_room.get('roomId')}")
+            return context.res.json({"joined": True, "room": existing_room})
 
         # Suche nach wartenden Räumen mit <2 Spielern
-        waiting_rooms = [d for d in docs_list if d.get("state") == "waiting" and len(d.get("players", [])) < 2]
+        waiting_room = next((d for d in docs_list if d.get("state") == "waiting" and len(d.get("players", [])) < 2), None)
 
-        if waiting_rooms:
-            # Nimm den ersten passenden Raum
-            room = waiting_rooms[0]
-            doc_id = room.get("$id") or room.get("roomId")
-            players = list(room.get("players", []))
+        if waiting_room:
+            doc_id = waiting_room.get("$id") or waiting_room.get("roomId")
+            players = list(waiting_room.get("players", []))
 
-            if user_id not in players:
-                players.append(user_id)
-
-            # Spiel starten, wenn jetzt 2 Spieler da sind
-            state = "started" if len(players) == 2 else "waiting"
-            start_player = random.choice(players) if state == "started" else None
-
-            # Alte überflüssige Räume löschen (nur 1 Spieler, nicht der aktuelle Raum)
-            # Alte überflüssige Räume löschen (nur 1 Spieler, nicht der aktuelle Raum)
-            if state == "started":
-                for old_room in waiting_rooms:
-                    # Lösche nur Räume mit genau 1 Spieler, die nicht der aktuelle Raum sind
-                    if old_room.get("$id") != doc_id and len(old_room.get("players", [])) == 1:
-                        try:
-                            databases.delete_document(
-                                database_id=db_id,
-                                collection_id=col_id,
-                                document_id=old_room.get("$id") or old_room.get("roomId")
-                            )
-                            context.log(f"[matchmaking] deleted old single-player room {old_room.get('roomId')}")
-                        except Exception as e:
-                            context.log(f"[matchmaking] failed to delete old room {old_room.get('roomId')}: {e}")
-
+            # Spieler hinzufügen
+            players.append(user_id)
+            # Raum direkt starten
+            state = "started"
+            start_player = random.choice(players)
 
             try:
                 updated = databases.update_document(
@@ -105,13 +87,23 @@ def main(context):
                     }
                 )
                 context.log(f"[matchmaking] user {user_id} joined room {doc_id}; start_player={start_player}")
+
+                # Alle alten Einzelräume löschen (außer dem aktuellen)
+                for old_room in docs_list:
+                    if old_room.get("$id") != doc_id and len(old_room.get("players", [])) == 1:
+                        try:
+                            databases.delete_document(database_id=db_id, collection_id=col_id, document_id=old_room.get("$id"))
+                            context.log(f"[matchmaking] deleted old single-player room {old_room.get('roomId')}")
+                        except Exception as e:
+                            context.log(f"[matchmaking] failed to delete old room {old_room.get('roomId')}: {e}")
+
                 return context.res.json({"joined": True, "room": updated})
             except Exception as e:
                 context.log(f"[matchmaking] update_document error for {doc_id}: {e}")
                 return context.res.json({"error": f"DB update error: {e}"}, 500)
 
         else:
-            # Neuer Raum anlegen, falls kein wartender Raum existiert
+            # Neuer Raum für Spieler erstellen
             room_id = str(uuid.uuid4())[:8]
             created = databases.create_document(
                 database_id=db_id,
@@ -126,6 +118,7 @@ def main(context):
                     "answer": ""
                 }
             )
+            context.log(f"[matchmaking] created new room {room_id} for user {user_id}")
             return context.res.json({"joined": False, "room": created})
 
     except AppwriteException as err:
