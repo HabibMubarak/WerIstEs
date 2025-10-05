@@ -61,7 +61,7 @@ def main(context):
         char_data["random"] = random_chars
 
         # Update Daten
-        update_data = {"character_data": char_data}
+        update_data = {"character_data": json.dumps(char_data)}
         if both_ready:
             update_data["state"] = "ready"
 
