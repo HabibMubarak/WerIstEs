@@ -1,1 +1,2 @@
 appwrite
+sqlite3
