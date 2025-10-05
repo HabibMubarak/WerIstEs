@@ -2,11 +2,8 @@ from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.exception import AppwriteException
 import os, json, random
-import sys
 import os
 
-# Zwei Ebenen nach oben gehen, damit core gefunden wird
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from character import Character 
 
