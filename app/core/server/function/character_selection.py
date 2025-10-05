@@ -2,7 +2,13 @@ from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.exception import AppwriteException
 import os, json, random
-from core.character import Character  # Deine SQLite Character Klasse
+import sys
+import os
+
+# Zwei Ebenen nach oben gehen, damit core gefunden wird
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
+from character import Character 
 
 def _parse_request_body(req):
     raw = getattr(req, 'body', None)
