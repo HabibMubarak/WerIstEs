@@ -2,10 +2,13 @@ from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.exception import AppwriteException
 import os, json, random
-import os
+import sys
 
+# Den app/core-Ordner zum Python-Pfad hinzufügen
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
-from character import Character 
+from character import Character
+
 
 def _parse_request_body(req):
     raw = getattr(req, 'body', None)
