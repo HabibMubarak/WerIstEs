@@ -28,9 +28,41 @@ class GameFieldScreen(MDScreen):
 
 
     def on_enter(self):
+        self.update_recycle_views()
         self.connect_to_server(host="127.0.0.1", port=5000)  # IP vom Server
-        self.init_field(total=24)
+
         self.set_send_button_enabled(self.is_my_turn)
+
+
+    def update_recycle_views(self):
+        """Füllt RecycleViews mit den Charakteren"""
+        self.ids.rv_available.data = [
+            {
+                "tile_text": char["name"],
+                "tile_source": char["img"],
+                "tile_size": [160, 360],
+                "show_icons": True,
+                "left_only": False,
+                "tile_left_icon": "thumb-down",
+                "tile_right_icon": "thumb-up",
+                "on_eliminate": self.move_to_eliminated,
+                "on_thumb_up_message": self.send_message
+            }
+            for char in self.available_chars
+        ]
+
+        self.ids.rv_eliminated.data = [
+            {
+                "tile_text": char["name"],
+                "tile_source": char["img"],
+                "tile_size": [160, 360],
+                "show_icons": True,
+                "left_only": True,
+                "tile_left_icon": "undo",
+                "on_undo": self.move_to_available
+            }
+            for char in self.eliminated_chars
+        ]
 
     def init_field(self, total=24):
         """Füllt available_chars auf insgesamt `total` Charaktere auf, ohne Duplikate, und mischt sie."""

@@ -4,9 +4,6 @@ from appwrite.exception import AppwriteException
 import os, json, random
 import sys
 
-# Den app/core-Ordner zum Python-Pfad hinzufügen
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
-
 from character import Character
 
 

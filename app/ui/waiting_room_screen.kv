@@ -9,14 +9,14 @@
 
         MDLabel:
             id: waiting_label
-            text: root.waiting_text
+            text: root.waiting_text  # Dynamischer Text
             halign: "center"
             font_size: "32sp"
             pos_hint: {"center_x": 0.5, "center_y": 0.6}
 
         MDLabel:
             id: player_count_label
-            text: root.player_count_text
+            text: root.player_count_text  # Dynamischer Text
             halign: "center"
             font_size: "24sp"
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
@@ -28,3 +28,11 @@
             height: dp(50)
             on_release:
                 root.go_back()
+
+        # Optional: Lade-Spinner während des Wartens
+        MDSpinner:
+            id: spinner
+            size_hint: None, None
+            size: dp(48), dp(48)
+            pos_hint: {"center_x": 0.5, "center_y": 0.4}
+            active: True

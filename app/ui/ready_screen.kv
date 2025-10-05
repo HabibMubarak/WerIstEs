@@ -1,0 +1,67 @@
+<ReadyScreen>:
+    name: "ready_screen"
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: dp(30)
+        padding: dp(40)
+        md_bg_color: 0.08, 0.08, 0.12, 1
+
+        MDLabel:
+            text: "Bereit zum Spielen!"
+            halign: "center"
+            font_style: "H5"
+
+        MDBoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            height: dp(140)
+            spacing: dp(40)
+            pos_hint: {"center_x": 0.5}
+
+            MDCard:
+                size_hint: None, None
+                size: dp(120), dp(120)
+                radius: [20,]
+                md_bg_color: root.player_color
+                MDBoxLayout:
+                    orientation: "vertical"
+                    MDIcon:
+                        icon: "account"
+                        halign: "center"
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                    MDLabel:
+                        text: "Du"
+                        halign: "center"
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+
+            MDCard:
+                size_hint: None, None
+                size: dp(120), dp(120)
+                radius: [20,]
+                md_bg_color: root.opponent_color
+                MDBoxLayout:
+                    orientation: "vertical"
+                    MDIcon:
+                        icon: "account-question"
+                        halign: "center"
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                    MDLabel:
+                        text: "Gegner"
+                        halign: "center"
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+
+        MDSpinner:
+            size_hint: None, None
+            size: dp(48), dp(48)
+            pos_hint: {"center_x": 0.5}
+            active: True
+
+        MDLabel:
+            id: status_label
+            text: root.status_text
+            halign: "center"
+            theme_text_color: "Hint"
