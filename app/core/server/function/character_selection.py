@@ -54,8 +54,13 @@ def main(context):
         update_data = {}
 
         if both_ready:
-            char_manager = Character()
-            
+            # Versuch, DB zu laden
+            try:
+                char_manager = Character()
+                db_exists = os.path.exists(char_manager.db_path)
+            except:
+                db_exists = False
+
             # Spieler-Charaktere sammeln
             player_chars = [c for k, c in char_data.items() if k in players and isinstance(c, dict)]
             player_names = [c["name"] for c in player_chars]
@@ -63,18 +68,27 @@ def main(context):
             # Anzahl Randoms bestimmen
             random_count = 23 if len(set(player_names)) < len(player_names) else 22
 
-            # Comon Animes festlegen (wie vorher in GameFieldScreen)
+            # Common Animes
             common_animes = [
                 "Attack on Titan (Shingeki no Kyojin)",
                 "One Piece",
                 "Naruto / Naruto Shippuden"
             ]
 
-            # Random-Charaktere aus DB holen (nur aus common_animes, keine Duplikate)
-            available_chars = char_manager.get_random_characters_with_images(common_animes, 100)
+            if db_exists:
+                # Random-Charaktere aus DB holen
+                available_chars = char_manager.get_random_characters_with_images(common_animes, 100)
+            else:
+                # Dummy-Liste verwenden
+                available_chars = [
+                    {"name": f"Random{i}", "img": f"https://via.placeholder.com/150?text=Random{i}"} 
+                    for i in range(100)
+                ]
+
+            # Spieler-Charaktere entfernen
             available_chars = [c for c in available_chars if c["name"] not in player_names]
 
-            # zufällig auswählen
+            # Zufällig auswählen
             if len(available_chars) < random_count:
                 random_chars = available_chars
             else:
