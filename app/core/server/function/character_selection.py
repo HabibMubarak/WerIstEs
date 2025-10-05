@@ -14,6 +14,7 @@ def _parse_request_body(req):
     return {}
 
 def main(context):
+    # Appwrite Client
     client = Client()\
         .set_endpoint(os.environ["APPWRITE_FUNCTION_API_ENDPOINT"])\
         .set_project(os.environ["APPWRITE_FUNCTION_PROJECT_ID"])\
@@ -32,36 +33,35 @@ def main(context):
         if not all([room_id, user_id, character]):
             return context.res.json({"error": "roomId, userId oder character fehlen"}, 400)
 
-        # 1️⃣ Raum abrufen
+        # Raum abrufen
         room = databases.get_document(db_id, col_id, room_id)
-        char_data = room.get("character_data", {})  # dict
+        if not room:
+            return context.res.json({"error": "Room nicht gefunden"}, 404)
 
-        # 2️⃣ Spieler-Charakter speichern
+        # character_data sicher initialisieren
+        char_data = room.get("character_data") or {}
         char_data[user_id] = character
 
-        # 3️⃣ Prüfen, ob beide Spieler gewählt haben
-        both_ready = len([k for k in char_data if k in room.get("players", [])]) == 2
+        # Prüfen, ob beide Spieler gewählt haben
+        players = room.get("players", [])
+        ready_players = [p for p in players if p in char_data]
+        both_ready = len(ready_players) >= 2
 
-        # 4️⃣ Random-Charaktere generieren
-        all_possible_chars = [
-            {"name": f"Random{i}", "img": f"url{i}.png"} for i in range(100)
-        ]
-
+        # Random-Charaktere generieren
+        all_possible_chars = [{"name": f"Random{i}", "img": f"url{i}.png"} for i in range(100)]
         chosen_names = [c["name"] for c in char_data.values()]
         available_chars = [c for c in all_possible_chars if c["name"] not in chosen_names]
 
         random_count = 22
-        # Wenn beide denselben Spieler-Charakter gewählt haben, +1 Random
-        player_chars = [c for k,c in char_data.items() if k in room.get("players",[])]
+        player_chars = [c for k, c in char_data.items() if k in players]
         if len({c["name"] for c in player_chars}) < len(player_chars):
             random_count = 23
 
         random_chars = random.sample(available_chars, random_count)
+        char_data["random"] = random_chars
 
-        # 5️⃣ Alle Charaktere zusammenführen
-        char_data["random"] = random_chars  # unter "random" speichern
+        # Update Daten
         update_data = {"character_data": char_data}
-
         if both_ready:
             update_data["state"] = "ready"
 
