@@ -2,7 +2,7 @@ from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.exception import AppwriteException
 import os, json, random
-from app.core.character import Character  # Deine SQLite Character Klasse
+from core.character import Character  # Deine SQLite Character Klasse
 
 def _parse_request_body(req):
     raw = getattr(req, 'body', None)
