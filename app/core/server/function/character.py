@@ -6,7 +6,7 @@ import os
 
 class Character:
     def __init__(self):
-        self.db_path = r"app/assets/characters/anime_characters.db"
+        self.db_path = r"anime_characters.db"
         self._setup_database()
 
     
