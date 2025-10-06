@@ -6,13 +6,20 @@ import os
 
 class Character:
     def __init__(self):
-        self.db_path = r"anime_characters.db"
+        current_file = os.path.abspath(__file__)
+        # Ordner der aktuellen Datei
+        current_dir = os.path.dirname(current_file)
+        # DB-Datei im gleichen Ordner
+        self.db_path = os.path.join(current_dir, "anime_characters.db")
+        
         self._setup_database()
 
     
     def _setup_database(self):
         """Erstellt die Tabelle, falls sie noch nicht existiert."""
-        os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
+        dir_path = os.path.dirname(self.db_path)
+        if dir_path:  # nur Ordner erstellen, wenn es einen gibt
+            os.makedirs(dir_path, exist_ok=True)
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         cursor.execute("""
