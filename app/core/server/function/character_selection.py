@@ -73,7 +73,7 @@ def main(context):
                 db_exists = os.path.exists(char_manager.db_path)
                 context.log(f"DB path: {char_manager.db_path}")
                 context.log(f"DB exists: {os.path.exists(char_manager.db_path)}")
-
+                context.log(char_manager.get_anime_names())
             except:
                 db_exists = False
 
