@@ -45,14 +45,14 @@ def main(context):
     # --- Appwrite setup ---
     client = (
         Client()
-        .set_endpoint(os.environ["APPWRITE_ENDPOINT"])
-        .set_project(os.environ["APPWRITE_PROJECT_ID"])
+        .set_endpoint(os.environ["APPWRITE_FUNCTION_API_ENDPOINT"])
+        .set_project(os.environ["APPWRITE_FUNCTION_PROJECT_ID"])
         .set_key(os.environ["APPWRITE_API_KEY"])
     )
     db = Databases(client)
 
-    DATABASE_ID = os.environ["APPWRITE_DATABASE_ID"]
-    COLLECTION_ID = os.environ["APPWRITE_ROOMS_COLLECTION"]
+    DATABASE_ID = os.environ["MY_DB_ID"]
+    COLLECTION_ID = os.environ["MY_COLLECTION_ID"]
 
     # --- Raum holen ---
     try:
