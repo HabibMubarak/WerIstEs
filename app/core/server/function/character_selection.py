@@ -42,10 +42,18 @@ def main(context):
 
         # character_data laden
         char_data_raw = room.get("character_data") or "{}"
+
+        # Wenn es schon ein dict ist, nimm es direkt; sonst parse
         if isinstance(char_data_raw, str):
-            char_data = json.loads(char_data_raw)
+            try:
+                char_data = json.loads(char_data_raw)
+                if not isinstance(char_data, dict):
+                    char_data = {}
+            except json.JSONDecodeError:
+                char_data = {}
         else:
             char_data = char_data_raw
+
 
         # Spielercharakter speichern
         char_data[user_id] = character
