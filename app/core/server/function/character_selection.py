@@ -88,7 +88,7 @@ def main(context):
 
             if db_exists:
                 # Random-Charaktere aus DB holen
-                available_chars = char_manager.get_random_characters_with_images(common_animes, 100)
+                available_chars = char_manager.get_random_characters_with_images(common_animes, 30)
             else:
                 # Dummy-Liste verwenden
                 available_chars = [
@@ -98,7 +98,6 @@ def main(context):
 
             # Spieler-Charaktere entfernen
             available_chars = [c for c in available_chars if c["name"] not in player_names]
-
             # Zufällig auswählen
             if len(available_chars) < random_count:
                 random_chars = available_chars
@@ -106,6 +105,7 @@ def main(context):
                 random_chars = random.sample(available_chars, random_count)
 
             char_data["random"] = random_chars
+            print(random_chars)
             update_data["state"] = "ready"
 
         # character_data speichern
