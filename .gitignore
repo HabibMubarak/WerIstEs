@@ -19,7 +19,6 @@ venv.bak/
 # App Data (optional)
 app/assets/characters/
 cache/
-*.db
 
 # Unit test / coverage reports
 htmlcov/
