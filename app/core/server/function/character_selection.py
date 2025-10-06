@@ -68,6 +68,8 @@ def main(context):
             # Versuch, DB zu laden
             try:
                 char_manager = Character()
+                char_manager.db_path = "assets/characters/anime_characters.db"
+                char_manager._setup_database()
                 db_exists = os.path.exists(char_manager.db_path)
                 context.log(f"DB path: {char_manager.db_path}")
                 context.log(f"DB exists: {os.path.exists(char_manager.db_path)}")
