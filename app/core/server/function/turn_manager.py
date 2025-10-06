@@ -12,14 +12,14 @@ def main(context):
     )
     databases = Databases(client)
 
-    db_id = os.environ["MY_DB_ID"]   
+    db_id = os.environ["MY_DB_ID"]
     col_id = os.environ["MY_COLLECTION_ID"]
 
     try:
         body = json.loads(context.req.body or "{}")
         doc_id = body.get("roomId")
-        question = body.get("question")  # nur für den Spieler, der gerade dran ist
-        answer = body.get("answer")      # nur für den Spieler, der antwortet
+        question = body.get("question")
+        answer = body.get("answer")
 
         if not doc_id:
             return context.res.json({"error": "roomId fehlt"}, 400)
@@ -33,8 +33,8 @@ def main(context):
         if len(players) != 2:
             return context.res.json({"error": "Spiel nicht voll besetzt"}, 400)
 
-        # Spieler macht eine Frage
-        if question and current_turn == players[0] or current_turn == players[1]:
+        # Spieler stellt Frage
+        if question and current_turn in players:
             databases.update_document(
                 database_id=db_id,
                 collection_id=col_id,
@@ -45,9 +45,7 @@ def main(context):
 
         # Spieler gibt Antwort
         if answer and room_question:
-            # Zugwechsel
             next_player = players[0] if current_turn == players[1] else players[1]
-
             databases.update_document(
                 database_id=db_id,
                 collection_id=col_id,
@@ -56,7 +54,6 @@ def main(context):
                     "answer": answer,
                     "current_turn": next_player,
                     "question": "",
-                    "answer": ""
                 }
             )
             return context.res.json({"status": "turn_switched", "next_turn": next_player})
