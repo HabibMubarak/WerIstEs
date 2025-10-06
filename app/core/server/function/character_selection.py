@@ -75,7 +75,7 @@ def main(context):
             # Spieler-Charaktere sammeln
             player_chars = [c for k, c in char_data.items() if k in players and isinstance(c, dict)]
             player_names = [c["name"] for c in player_chars]
-
+            context.log(f">>> Player chars: {player_names}")
             # Anzahl Randoms bestimmen
             random_count = 23 if len(set(player_names)) < len(player_names) else 22
 
@@ -95,9 +95,12 @@ def main(context):
                     {"name": f"Random{i}", "img": f"https://via.placeholder.com/150?text=Random{i}"} 
                     for i in range(100)
                 ]
-
+            context.log(f">>> Available chars before filter: {len(available_chars)}")
             # Spieler-Charaktere entfernen
             available_chars = [c for c in available_chars if c["name"] not in player_names]
+            context.log(f">>> Available chars after filter: {len(available_chars)}")
+            
+            
             # Zufällig auswählen
             if len(available_chars) < random_count:
                 random_chars = available_chars
@@ -105,7 +108,7 @@ def main(context):
                 random_chars = random.sample(available_chars, random_count)
 
             char_data["random"] = random_chars
-            print(random_chars)
+            context.log(f">>> Random chars: {random_chars}")
             update_data["state"] = "ready"
 
         # character_data speichern
