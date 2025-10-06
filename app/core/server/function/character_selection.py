@@ -4,7 +4,7 @@ from appwrite.exception import AppwriteException
 import os, json, random
 import sys
 
-from .character import Character
+from character import Character
 
 
 def _parse_request_body(req):
