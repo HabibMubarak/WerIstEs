@@ -69,6 +69,9 @@ def main(context):
             try:
                 char_manager = Character()
                 db_exists = os.path.exists(char_manager.db_path)
+                context.log(f"DB path: {char_manager.db_path}")
+                context.log(f"DB exists: {os.path.exists(char_manager.db_path)}")
+
             except:
                 db_exists = False
 
