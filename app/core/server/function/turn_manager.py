@@ -104,10 +104,11 @@ def main(context):
                 "state": "answer_sent"
             })
         except Exception as e:
+            context.error(f"Beim Speichern der Antwort ist ein Fehler aufgetreten: {repr(e)}")
             return context.res.json({
-                "error": f"Beim Speichern der Antwort ist ein Fehler aufgetreten: {str(e)}",
-                "trace": repr(e)
-            }, 500)
+            "error": f"Beim Speichern der Antwort ist ein Fehler aufgetreten: {str(e)}",
+            "trace": repr(e)
+        }, 500)
 
     # --- Kein Frage/Aantwort-Request ---
     else:
