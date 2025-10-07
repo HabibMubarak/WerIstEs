@@ -88,10 +88,12 @@ def main(context):
 
     # --- Antwort geben ---
     elif answer:
-        next_turn = players[1] if user_id == players[0] else players[0]
+        next_turn = user_id
         update_data = {
             "answer": answer,
-            "current_turn": next_turn
+            "current_turn": next_turn,
+            "state": "playing",
+            "question": ""
         }
         db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
         return context.res.json({
