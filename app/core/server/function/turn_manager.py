@@ -88,20 +88,26 @@ def main(context):
 
     # --- Antwort geben ---
     elif answer:
-        update_data = {
-            "answer": answer,
-            "current_turn": user_id,
-            "state": "answer_sent"
-        }
-        db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
-        return context.res.json({
-            "status": "ok",
-            "type": "answer",
-            "message": "Antwort gespeichert",
-            "answer": answer,
-            "current_turn": user_id,
-            "state": "answer_sent"
-        })
+        try:
+            update_data = {
+                "answer": answer,
+                "current_turn": user_id,
+                "state": "answer_sent"
+            }
+            db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
+            return context.res.json({
+                "status": "ok",
+                "type": "answer",
+                "message": "Antwort gespeichert",
+                "answer": answer,
+                "current_turn": user_id,
+                "state": "answer_sent"
+            })
+        except Exception as e:
+            return context.res.json({
+                "error": f"Beim Speichern der Antwort ist ein Fehler aufgetreten: {str(e)}",
+                "trace": repr(e)
+            }, 500)
 
     # --- Kein Frage/Aantwort-Request ---
     else:
