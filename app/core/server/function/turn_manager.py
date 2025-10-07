@@ -88,12 +88,10 @@ def main(context):
 
     # --- Antwort geben ---
     elif answer:
-        next_turn = user_id
         update_data = {
             "answer": answer,
-            "current_turn": next_turn,
-            "state": "playing",
-            "question": ""
+            "current_turn": user_id,
+            "state": "answer_sent"
         }
         db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
         return context.res.json({
@@ -101,7 +99,8 @@ def main(context):
             "type": "answer",
             "message": "Antwort gespeichert",
             "answer": answer,
-            "current_turn": next_turn
+            "current_turn": user_id,
+            "state": "answer_sent"
         })
 
     # --- Kein Frage/Aantwort-Request ---
