@@ -29,6 +29,21 @@ def _parse_request_body(req):
         return {}
 
 
+def delete_room(databases, db_id, col_id, room_id, context):
+    """Hilfsfunktion zum gezielten Löschen eines Raums"""
+    try:
+        databases.delete_document(
+            database_id=db_id,
+            collection_id=col_id,
+            document_id=room_id
+        )
+        context.log(f"[matchmaking] manually deleted room {room_id}")
+        return {"deleted": True, "roomId": room_id}
+    except Exception as e:
+        context.log(f"[matchmaking] failed to delete room {room_id}: {e}")
+        return {"deleted": False, "error": str(e)}
+
+
 def main(context):
     client = (
         Client()
@@ -44,13 +59,23 @@ def main(context):
     try:
         body = _parse_request_body(context.req)
         user_id = body.get("userId")
-        if not user_id:
-            return context.res.json({"error": "userId fehlt"}, 400)
+        action = body.get("action")
+        room_id = body.get("roomId")
 
         if not db_id or not col_id:
             return context.res.json({"error": "DB_ID oder COLLECTION_ID nicht gesetzt"}, 500)
 
-        # Alle Dokumente abfragen
+        # 🔹 NEU: Aktion "delete"
+        if action == "delete":
+            if not room_id:
+                return context.res.json({"error": "roomId fehlt für delete"}, 400)
+            result = delete_room(databases, db_id, col_id, room_id, context)
+            return context.res.json(result, 200 if result["deleted"] else 500)
+
+        # 🔹 Standard: Matchmaking-Logik
+        if not user_id:
+            return context.res.json({"error": "userId fehlt"}, 400)
+
         docs_list = databases.list_documents(database_id=db_id, collection_id=col_id).get("documents", [])
         context.log(f"[matchmaking] fetched {len(docs_list)} documents from collection")
 
@@ -69,7 +94,6 @@ def main(context):
 
             # Spieler hinzufügen
             players.append(user_id)
-            # Raum direkt starten
             state = "started"
             start_player = random.choice(players)
 
@@ -88,7 +112,7 @@ def main(context):
                 )
                 context.log(f"[matchmaking] user {user_id} joined room {doc_id}; start_player={start_player}")
 
-                # Alle alten Einzelräume löschen (außer dem aktuellen)
+                # Alte Einzelräume löschen
                 for old_room in docs_list:
                     if old_room.get("$id") != doc_id and len(old_room.get("players", [])) == 1:
                         try:
@@ -103,7 +127,7 @@ def main(context):
                 return context.res.json({"error": f"DB update error: {e}"}, 500)
 
         else:
-            # Neuer Raum für Spieler erstellen
+            # Neuer Raum erstellen
             room_id = str(uuid.uuid4())[:8]
             created = databases.create_document(
                 database_id=db_id,
