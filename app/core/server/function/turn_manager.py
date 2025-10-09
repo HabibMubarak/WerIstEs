@@ -81,22 +81,26 @@ def main(context):
     
     # --- Spiel beenden ---
     if finish_state == "finish" and winner:
-        # Hole aktuelles winner_ack, Standard: leere Liste
         winner_ack = room.get("winner_ack", [])
-
         if user_id not in winner_ack:
             winner_ack.append(user_id)
 
+        # Erst speichern
         update_data = {
             "state": "finish",
             "winner": winner,
             "winner_ack": winner_ack
         }
-        context.log(f"Finish request: {update_data}")
+        try:
+            db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
+        except Exception as e:
+            return context.res.json({
+                "status": "error",
+                "message": f"DB Update failed: {str(e)}"
+            }, 500)
 
-        # Prüfen, ob beide Spieler auf WinnerScreen sind
+        # Dann prüfen, ob beide Spieler da sind
         if set(winner_ack) >= set(players):
-            # Raum löschen
             try:
                 db.delete_document(DATABASE_ID, COLLECTION_ID, room_id)
                 return context.res.json({
@@ -111,16 +115,15 @@ def main(context):
                     "status": "error",
                     "message": f"Fehler beim Löschen des Raums: {str(e)}"
                 }, 500)
-        else:
-            # Aktualisieren, wenn noch nicht beide Spieler da sind
-            db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
-            return context.res.json({
-                "status": "ok",
-                "message": f"Spiel beendet, Gewinner: {winner}",
-                "state": "finish",
-                "winner": winner,
-                "winner_ack": winner_ack
-            })
+
+        # Wenn noch nicht alle Spieler da sind
+        return context.res.json({
+            "status": "ok",
+            "message": f"Spiel beendet, Gewinner: {winner}",
+            "state": "finish",
+            "winner": winner,
+            "winner_ack": winner_ack
+        })
 
 
     # --- Frage stellen ---
