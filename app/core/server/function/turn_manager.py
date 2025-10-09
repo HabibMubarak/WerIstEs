@@ -38,6 +38,9 @@ def main(context):
     user_id = payload.get("userId")
     question = payload.get("question")
     answer = payload.get("answer")
+    winner = payload.get("winner")
+    finish_state = payload.get("state")
+
 
     if not room_id or not user_id:
         return context.res.json({"error": "roomId and userId required"}, 400)
@@ -57,16 +60,30 @@ def main(context):
     # --- Raum holen ---
     try:
         room = db.get_document(DATABASE_ID, COLLECTION_ID, room_id)
+        players = room.get("players", [])
+        current_turn = room.get("current_turn")
+        room_state = room.get("state")
     except Exception as e:
         return context.res.json({"error": f"Room not found: {e}"}, 404)
 
-    players = room.get("players", [])
-    current_turn = room.get("current_turn")
-    room_state = room.get("state")
+    
 
     # --- Prüfen, ob Raum bereit ist ---
     if len(players) < 2:
         return context.res.json({"error": "Room does not have 2 players yet."}, 400)
+    
+    # --- Spiel beenden ---
+    if finish_state == "finish" and winner:
+        db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data={
+            "state": "finish",
+            "winner": winner
+        })
+        return context.res.json({
+            "status": "ok",
+            "message": f"Spiel beendet, Gewinner: {winner}",
+            "state": "finish",
+            "winner": winner
+        })
 
     # --- Frage stellen ---
     if question:
