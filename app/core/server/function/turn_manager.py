@@ -5,42 +5,48 @@ from appwrite.services.databases import Databases
 
 
 def _parse_request_body(req):
-    raw = getattr(req, 'body', None)
-    if isinstance(raw, dict):
-        return raw
-    if raw is None:
-        return {}
-    if isinstance(raw, (bytes, bytearray)):
-        try:
-            raw = raw.decode('utf-8')
-        except Exception:
-            return {}
-    if isinstance(raw, str):
-        raw = raw.strip()
+    try:
+        # Appwrite liefert body meist als String
+        raw = getattr(req, "body", None)
         if not raw:
             return {}
+
+        if isinstance(raw, (bytes, bytearray)):
+            raw = raw.decode("utf-8")
+
+        if isinstance(raw, dict):
+            return raw
+
+        raw = raw.strip()
+
+        # Versuch 1: echtes JSON
         try:
             return json.loads(raw)
-        except Exception:
-            return {}
-    try:
-        return json.loads(str(raw))
-    except Exception:
-        return {}
+        except json.JSONDecodeError:
+            pass
+
+        # Versuch 2: Fallback – eval()-ähnliche Struktur, z. B. mit '
+        fixed = raw.replace("'", '"')
+        return json.loads(fixed)
+
+    except Exception as e:
+        return {"_parse_error": str(e)}
+
 
 
 def main(context):
     payload = _parse_request_body(context.req)
-    context.log(f"Incoming payload: {payload}")
+    context.log(f"Incoming payload raw: {getattr(context.req, 'body', None)}")
+    context.log(f"Parsed payload: {_parse_request_body(context.req)}")
     if not payload:
         return context.res.json({"error": "Invalid or empty JSON body"}, 400)
-
+    
     room_id = payload.get("roomId")
     user_id = payload.get("userId")
     question = payload.get("question")
     answer = payload.get("answer")
-    winner = payload.get("winner")
     finish_state = payload.get("state")
+    winner = payload.get("winner")
 
 
     if not room_id or not user_id:
