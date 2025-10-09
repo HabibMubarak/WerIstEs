@@ -74,16 +74,46 @@ def main(context):
     
     # --- Spiel beenden ---
     if finish_state == "finish" and winner:
-        db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data={
+        # Hole aktuelles winner_ack, Standard: leere Liste
+        winner_ack = room.get("winner_ack", [])
+
+        if user_id not in winner_ack:
+            winner_ack.append(user_id)
+
+        update_data = {
             "state": "finish",
-            "winner": winner
-        })
-        return context.res.json({
-            "status": "ok",
-            "message": f"Spiel beendet, Gewinner: {winner}",
-            "state": "finish",
-            "winner": winner
-        })
+            "winner": winner,
+            "winner_ack": winner_ack
+        }
+
+        # Prüfen, ob beide Spieler auf WinnerScreen sind
+        if set(winner_ack) >= set(players):
+            # Raum löschen
+            try:
+                db.delete_document(DATABASE_ID, COLLECTION_ID, room_id)
+                return context.res.json({
+                    "status": "ok",
+                    "message": f"Spiel beendet, Gewinner: {winner}, Raum gelöscht",
+                    "state": "finish",
+                    "winner": winner,
+                    "room_deleted": True
+                })
+            except Exception as e:
+                return context.res.json({
+                    "status": "error",
+                    "message": f"Fehler beim Löschen des Raums: {str(e)}"
+                }, 500)
+        else:
+            # Aktualisieren, wenn noch nicht beide Spieler da sind
+            db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
+            return context.res.json({
+                "status": "ok",
+                "message": f"Spiel beendet, Gewinner: {winner}",
+                "state": "finish",
+                "winner": winner,
+                "winner_ack": winner_ack
+            })
+
 
     # --- Frage stellen ---
     if question:
