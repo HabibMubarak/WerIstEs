@@ -31,6 +31,7 @@ def _parse_request_body(req):
 
 def main(context):
     payload = _parse_request_body(context.req)
+    context.log(f"Incoming payload: {payload}")
     if not payload:
         return context.res.json({"error": "Invalid or empty JSON body"}, 400)
 
@@ -85,6 +86,7 @@ def main(context):
             "winner": winner,
             "winner_ack": winner_ack
         }
+        context.log(f"Finish request: {update_data}")
 
         # Prüfen, ob beide Spieler auf WinnerScreen sind
         if set(winner_ack) >= set(players):
