@@ -85,17 +85,32 @@ def main(context):
     # --- Spiel beenden ---
     if finish_state == "finish" and winner:
         next_turn = players[1] if user_id == players[0] else players[0]
+
+        # hole existierendes winner_ack aus DB oder Body
+        current_winner_ack = room.get("winner_ack", [])
+        if not isinstance(current_winner_ack, list):
+            current_winner_ack = []
+
+        # füge aktuellen Spieler hinzu, falls noch nicht vorhanden
+        if user_id not in current_winner_ack:
+            current_winner_ack.append(user_id)
+
         update_data = {
             "current_turn": next_turn,
             "state": "finish",
-            "winner": winner
+            "winner": winner,
+            "winner_ack": current_winner_ack
         }
+
         db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
+
         return context.res.json({
             "status": "ok",
             "message": "Spiel beendet",
             "current_turn": next_turn,
-            "winner": winner
+            "winner": winner,
+            "winner_ack": current_winner_ack,
+            "state": "finish"
         })
 
     # --- Frage stellen ---
