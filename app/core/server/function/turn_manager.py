@@ -93,7 +93,9 @@ def main(context):
         }
         try:
             db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
+            context.log(f"Updated room {room_id} with winner={winner} and winner_ack={winner_ack}")
         except Exception as e:
+            context.log(f"DB update failed: {e}")
             return context.res.json({
                 "status": "error",
                 "message": f"DB Update failed: {str(e)}"
