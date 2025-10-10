@@ -83,36 +83,41 @@ def main(context):
         return context.res.json({"error": "Room does not have 2 players yet."}, 400)
     
     if finish_state == "finish":
+        context.log(f"Finish-State erreicht für room {room_id}, user {user_id}")
+
         current_winner_ack = room.get("winner_ack", [])
         if not isinstance(current_winner_ack, list):
             current_winner_ack = []
 
+        context.log(f"Aktuelles winner_ack: {current_winner_ack}")
+
         # füge nur hinzu, falls noch nicht drin
         if user_id not in current_winner_ack:
             current_winner_ack.append(user_id)
+            context.log(f"User {user_id} zu winner_ack hinzugefügt: {current_winner_ack}")
 
         # Gewinner nur einmal setzen
-        if "winner" not in room or not room["winner"]:
+        winner_to_set = room.get("winner")
+        if not winner_to_set:
             winner_to_set = payload.get("winner") or user_id
-            update_data = {
-                "winner": winner_to_set,
-                "state": "finish",
-                "winner_ack": current_winner_ack
-            }
-        else:
-            update_data = {
-                "state": "finish",
-                "winner_ack": current_winner_ack
-            }
+            context.log(f"Gewinner gesetzt auf: {winner_to_set}")
+
+        update_data = {
+            "winner": winner_to_set,
+            "state": "finish",
+            "winner_ack": current_winner_ack
+        }
 
         db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
+        context.log(f"DB aktualisiert: {update_data}")
 
         return context.res.json({
             "status": "ok",
-            "winner": room.get("winner", winner_to_set),
+            "winner": winner_to_set,
             "winner_ack": current_winner_ack,
             "state": "finish"
         })
+
 
 
     # --- Frage stellen ---
