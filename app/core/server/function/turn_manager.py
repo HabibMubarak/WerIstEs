@@ -87,18 +87,22 @@ def main(context):
         if not isinstance(current_winner_ack, list):
             current_winner_ack = []
 
-        # Gewinner nur beim ersten Mal setzen
+        # füge nur hinzu, falls noch nicht drin
+        if user_id not in current_winner_ack:
+            current_winner_ack.append(user_id)
+
+        # Gewinner nur einmal setzen
         if "winner" not in room or not room["winner"]:
             winner_to_set = payload.get("winner") or user_id
             update_data = {
                 "winner": winner_to_set,
                 "state": "finish",
-                "winner_ack": current_winner_ack + [user_id]
+                "winner_ack": current_winner_ack
             }
         else:
             update_data = {
                 "state": "finish",
-                "winner_ack": current_winner_ack + [user_id]
+                "winner_ack": current_winner_ack
             }
 
         db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
@@ -106,7 +110,7 @@ def main(context):
         return context.res.json({
             "status": "ok",
             "winner": room.get("winner", winner_to_set),
-            "winner_ack": current_winner_ack + [user_id],
+            "winner_ack": current_winner_ack,
             "state": "finish"
         })
 
