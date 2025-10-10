@@ -82,31 +82,34 @@ def main(context):
     if len(players) < 2:
         return context.res.json({"error": "Room does not have 2 players yet."}, 400)
     
-    if finish_state == "finish" and winner:
+    if finish_state == "finish":
         current_winner_ack = room.get("winner_ack", [])
         if not isinstance(current_winner_ack, list):
             current_winner_ack = []
 
-        if user_id not in current_winner_ack:
-            current_winner_ack.append(user_id)
-
-        update_data = {
-            "winner_ack": current_winner_ack,
-            "state": "finish"
-        }
-
         # Gewinner nur beim ersten Mal setzen
-        if "winner" not in room:
-            update_data["winner"] = winner
+        if "winner" not in room or not room["winner"]:
+            winner_to_set = payload.get("winner") or user_id
+            update_data = {
+                "winner": winner_to_set,
+                "state": "finish",
+                "winner_ack": current_winner_ack + [user_id]
+            }
+        else:
+            update_data = {
+                "state": "finish",
+                "winner_ack": current_winner_ack + [user_id]
+            }
 
         db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
 
         return context.res.json({
             "status": "ok",
-            "winner": room.get("winner", winner),
-            "winner_ack": current_winner_ack,
+            "winner": room.get("winner", winner_to_set),
+            "winner_ack": current_winner_ack + [user_id],
             "state": "finish"
         })
+
 
     # --- Frage stellen ---
     if question:
