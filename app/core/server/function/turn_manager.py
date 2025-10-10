@@ -82,24 +82,28 @@ def main(context):
     if len(players) < 2:
         return context.res.json({"error": "Room does not have 2 players yet."}, 400)
     
-    # --- Spiel beenden ---
     if finish_state == "finish" and winner:
-        # hole existierendes winner_ack aus DB
         current_winner_ack = room.get("winner_ack", [])
         if not isinstance(current_winner_ack, list):
             current_winner_ack = []
 
-        # füge aktuellen Spieler hinzu, falls noch nicht vorhanden
         if user_id not in current_winner_ack:
             current_winner_ack.append(user_id)
-            update_data = {
-                "winner_ack": current_winner_ack
-            }
-            db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
+
+        update_data = {
+            "winner_ack": current_winner_ack,
+            "state": "finish"
+        }
+
+        # Gewinner nur beim ersten Mal setzen
+        if "winner" not in room:
+            update_data["winner"] = winner
+
+        db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
 
         return context.res.json({
             "status": "ok",
-            "winner": room.get("winner"),  # Gewinner steht bereits in der DB
+            "winner": room.get("winner", winner),
             "winner_ack": current_winner_ack,
             "state": "finish"
         })
