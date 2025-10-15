@@ -115,7 +115,8 @@ def main(context):
             "status": "ok",
             "winner": winner_to_set,
             "winner_ack": current_winner_ack,
-            "state": "finish"
+            "state": "finish",
+            "players": players
         })
 
 
