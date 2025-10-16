@@ -127,8 +127,8 @@ def main(context):
 
         # ... Holen der nächsten Frage (kann "" sein, wenn geraten wird)
         next_question_msg = payload.get("next_question", "")
-
-        next_turn = players[1] if user_id == players[0] else players[0]
+        opponent = [p for p in players if p != user_id]
+        next_turn = opponent[0] if opponent else user_id
 
         update_data = {
             "answer": answer,
@@ -153,7 +153,8 @@ def main(context):
     # --- Erster Zug im Spiel: Nur Frage senden ---
     elif question and not answer:
         # Spieler A stellt die allererste Frage
-        next_turn = players[1] if user_id == players[0] else players[0]
+        opponent = [p for p in players if p != user_id]
+        next_turn = opponent[0] if opponent else user_id # Wechsel zum Antwortenden (Gegner)
         update_data = {
             "question": question,
             "answer": None, # Antwort zurücksetzen
