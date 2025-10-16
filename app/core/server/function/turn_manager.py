@@ -121,12 +121,43 @@ def main(context):
 
 
 
-    # --- Frage stellen ---
-    if question:
+    # --- Zug beenden (Antwort senden und nächste Frage stellen) ---
+    if answer and payload.get("next_question"):
+        # Spieler B (der gerade an der Reihe ist) sendet: Antwort und neue Frage
+        
+        next_turn = players[1] if user_id == players[0] else players[0]
+
+        update_data = {
+            "answer": answer,
+            "question": payload.get("next_question"),
+            "current_turn": next_turn,
+            "state": "playing"
+        }
+        
+        # Zustand des Zugs löschen (falls noch Reste vorhanden)
+        # Dies ist im neuen Protokoll wahrscheinlich nicht nötig, aber schadet nicht:
+        # if "answer_sent" in update_data:
+        #     del update_data["answer_sent"]
+
+        db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
+        
+        return context.res.json({
+            "status": "ok",
+            "type": "turn_finished",
+            "message": "Antwort und nächste Frage gespeichert. Zug gewechselt.",
+            "answer": answer,
+            "question": update_data["question"],
+            "current_turn": next_turn,
+            "state": "playing"
+        })
+
+    # --- Erster Zug im Spiel: Nur Frage senden ---
+    elif question and not answer:
+        # Spieler A stellt die allererste Frage
         next_turn = players[1] if user_id == players[0] else players[0]
         update_data = {
             "question": question,
-            "answer": "",
+            "answer": "", # Antwort zurücksetzen
             "current_turn": next_turn,
             "state": "playing"
         }
@@ -134,34 +165,10 @@ def main(context):
         return context.res.json({
             "status": "ok",
             "type": "question",
-            "message": "Frage gespeichert",
+            "message": "Erste Frage gespeichert",
             "current_turn": next_turn,
             "question": question
         })
-
-    # --- Antwort geben ---
-    elif answer:
-        try:
-            update_data = {
-                "answer": answer,
-                "current_turn": user_id,
-                "state": "answer_sent"
-            }
-            db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
-            return context.res.json({
-                "status": "ok",
-                "type": "answer",
-                "message": "Antwort gespeichert",
-                "answer": answer,
-                "current_turn": user_id,
-                "state": "answer_sent"
-            })
-        except Exception as e:
-            context.error(f"Beim Speichern der Antwort ist ein Fehler aufgetreten: {repr(e)}")
-            return context.res.json({
-            "error": f"Beim Speichern der Antwort ist ein Fehler aufgetreten: {str(e)}",
-            "trace": repr(e)
-        }, 500)
 
     # --- Kein Frage/Aantwort-Request ---
     else:
