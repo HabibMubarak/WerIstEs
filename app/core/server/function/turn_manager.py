@@ -122,22 +122,21 @@ def main(context):
 
 
     # --- Zug beenden (Antwort senden und nächste Frage stellen) ---
-    if answer and payload.get("next_question"):
-        # Spieler B (der gerade an der Reihe ist) sendet: Antwort und neue Frage
-        
+    if answer and user_id == current_turn: 
+        # Spieler B (der gerade an der Reihe ist) sendet: Antwort (und optional eine neue Frage/Rateversuch)
+
+        # ... Holen der nächsten Frage (kann "" sein, wenn geraten wird)
+        next_question_msg = payload.get("next_question", "")
+
         next_turn = players[1] if user_id == players[0] else players[0]
 
         update_data = {
             "answer": answer,
-            "question": payload.get("next_question"),
+            # Nutze die optional vorhandene next_question (kann "" sein)
+            "question": next_question_msg, 
             "current_turn": next_turn,
             "state": "playing"
         }
-        
-        # Zustand des Zugs löschen (falls noch Reste vorhanden)
-        # Dies ist im neuen Protokoll wahrscheinlich nicht nötig, aber schadet nicht:
-        # if "answer_sent" in update_data:
-        #     del update_data["answer_sent"]
 
         db.update_document(DATABASE_ID, COLLECTION_ID, room_id, data=update_data)
         
@@ -157,7 +156,7 @@ def main(context):
         next_turn = players[1] if user_id == players[0] else players[0]
         update_data = {
             "question": question,
-            "answer": "", # Antwort zurücksetzen
+            "answer": None, # Antwort zurücksetzen
             "current_turn": next_turn,
             "state": "playing"
         }
