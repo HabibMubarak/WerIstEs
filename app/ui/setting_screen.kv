@@ -16,3 +16,23 @@
         ScrollView:
             MDList:
                 id: settings_list
+
+                # Hintergrundmusik-Umschalter
+                OneLineAvatarIconListItem:
+                    text: "Musik"
+                    IconLeftWidget:
+                        icon: "music"
+                    IconRightWidget:
+                        icon: "volume-off" if app.muted else "volume-high"
+                        on_release:
+                            app.toggle_mute()
+                            self.icon = "volume-off" if app.muted else "volume-high"
+
+                # Abspielen im Hintergrund erlauben
+                OneLineAvatarIconListItem:
+                    text: "Im Hintergrund weiter abspielen"
+                    IconLeftWidget:
+                        icon: "repeat"
+                    RightSwitch:
+                        active: app.play_in_background
+                        on_active: app.set_play_in_background(self.active)
